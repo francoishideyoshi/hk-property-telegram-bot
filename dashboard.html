@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HK Property Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root,[data-theme="light"]{--color-bg:#f7f6f2;--color-surface:#f9f8f5;--color-surface-2:#fbfbf9;--color-surface-offset:#f3f0ec;--color-surface-dynamic:#e6e4df;--color-divider:#dcd9d5;--color-border:#d4d1ca;--color-text:#28251d;--color-text-muted:#7a7974;--color-text-faint:#bab9b4;--color-primary:#01696f;--color-primary-hover:#0c4e54;--color-primary-highlight:#cedcd8;--color-orange:#da7101;--color-gold:#d19900;--color-success:#437a22;--color-blue:#006494;--color-purple:#7a39bb;--color-error:#a12c7b;--shadow-sm:0 1px 2px oklch(0.2 0.01 80/.06);--shadow-md:0 4px 12px oklch(0.2 0.01 80/.08);--shadow-lg:0 12px 32px oklch(0.2 0.01 80/.12);--radius-sm:0.375rem;--radius-md:0.5rem;--radius-lg:0.75rem;--radius-xl:1rem;--font-body:'Inter',sans-serif;--font-display:'Instrument Serif',Georgia,serif;--text-xs:clamp(0.75rem,.7rem + .25vw,.875rem);--text-sm:clamp(.875rem,.8rem + .35vw,1rem);--text-base:clamp(1rem,.95rem + .25vw,1.125rem);--text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);--text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);--space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-6:1.5rem;--space-8:2rem;--space-12:3rem;--transition:180ms cubic-bezier(.16,1,.3,1)}
+[data-theme="dark"]{--color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#201f1d;--color-surface-offset:#1d1c1a;--color-surface-dynamic:#2d2c2a;--color-divider:#262523;--color-border:#393836;--color-text:#cdccca;--color-text-muted:#797876;--color-text-faint:#5a5957;--color-primary:#4f98a3;--color-primary-hover:#227f8b;--color-primary-highlight:#313b3b;--color-orange:#fdab43;--color-gold:#e8af34;--color-success:#6daa45;--color-blue:#5591c7;--color-purple:#a86fdf;--color-error:#d163a7;--shadow-sm:0 1px 2px oklch(0 0 0/.2);--shadow-md:0 4px 12px oklch(0 0 0/.3);--shadow-lg:0 12px 32px oklch(0 0 0/.4)}
+@media(prefers-color-scheme:dark){:root:not([data-theme]){--color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#201f1d;--color-surface-offset:#1d1c1a;--color-surface-dynamic:#2d2c2a;--color-divider:#262523;--color-border:#393836;--color-text:#cdccca;--color-text-muted:#797876;--color-text-faint:#5a5957;--color-primary:#4f98a3;--color-primary-hover:#227f8b;--color-primary-highlight:#313b3b;--color-orange:#fdab43;--color-gold:#e8af34;--color-success:#6daa45;--color-blue:#5591c7;--color-purple:#a86fdf;--color-error:#d163a7;--shadow-sm:0 1px 2px oklch(0 0 0/.2);--shadow-md:0 4px 12px oklch(0 0 0/.3);--shadow-lg:0 12px 32px oklch(0 0 0/.4)}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg);transition:background var(--transition),color var(--transition)}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+a,button{transition:color var(--transition),background var(--transition),box-shadow var(--transition)}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm)}
+
+.header{position:sticky;top:0;z-index:100;background:color-mix(in oklch,var(--color-bg) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--color-border);padding:var(--space-4) var(--space-6)}
+.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:var(--space-4)}
+.logo{display:flex;align-items:center;gap:var(--space-3);text-decoration:none;color:var(--color-text)}
+.logo-name{font-family:var(--font-display);font-size:var(--text-lg);font-weight:400}
+.logo-sub{font-size:var(--text-xs);color:var(--color-text-muted);letter-spacing:.04em;text-transform:uppercase}
+.header-actions{display:flex;align-items:center;gap:var(--space-3)}
+.theme-btn{width:36px;height:36px;border-radius:9999px;display:flex;align-items:center;justify-content:center;color:var(--color-text-muted);border:1px solid var(--color-border)}
+.theme-btn:hover{color:var(--color-text);background:var(--color-surface-offset)}
+.last-updated{font-size:var(--text-xs);color:var(--color-text-faint)}
+
+.main{max-width:1200px;margin:0 auto;padding:var(--space-8) var(--space-6)}
+
+.tab-nav{display:flex;gap:var(--space-1);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-1);width:fit-content;margin-bottom:var(--space-6);overflow-x:auto}
+.tab-btn{padding:var(--space-2) var(--space-6);border-radius:calc(var(--radius-lg) - 4px);font-size:var(--text-sm);font-weight:500;color:var(--color-text-muted);transition:all var(--transition);white-space:nowrap}
+.tab-btn:hover{color:var(--color-text)}
+.tab-btn.active{background:var(--color-surface-2);color:var(--color-text);box-shadow:var(--shadow-sm)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── Region chips ─────────────────────────── */
+.region-filter{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);margin-bottom:var(--space-6);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg)}
+.region-filter-label{font-size:var(--text-xs);color:var(--color-text-faint);text-transform:uppercase;letter-spacing:.06em;margin-right:var(--space-1);white-space:nowrap}
+.region-chip{padding:.25em .75em;border-radius:9999px;font-size:var(--text-xs);font-weight:500;color:var(--color-text-muted);border:1px solid var(--color-border);background:var(--color-surface-offset);cursor:pointer;transition:all var(--transition);white-space:nowrap;user-select:none}
+.region-chip:hover{color:var(--color-text);border-color:var(--color-primary)}
+.region-chip.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary);box-shadow:var(--shadow-sm)}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-4);margin-bottom:var(--space-8)}
+.kpi-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-6);box-shadow:var(--shadow-sm)}
+.kpi-label{font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:var(--space-2)}
+.kpi-value{font-size:var(--text-xl);font-weight:600;font-variant-numeric:tabular-nums lining-nums;line-height:1.1}
+.kpi-sub{font-size:var(--text-xs);color:var(--color-text-faint);margin-top:var(--space-1)}
+.kpi-primary .kpi-value{color:var(--color-primary)}
+.kpi-orange .kpi-value{color:var(--color-orange)}
+.kpi-gold .kpi-value{color:var(--color-gold)}
+.kpi-blue .kpi-value{color:var(--color-blue)}
+.kpi-purple .kpi-value{color:var(--color-purple)}
+.kpi-error .kpi-value{color:var(--color-error)}
+
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6);margin-bottom:var(--space-8)}
+@media(max-width:768px){.chart-grid{grid-template-columns:1fr}.main{padding:var(--space-6) var(--space-4)}.region-filter{gap:var(--space-1)}}
+.chart-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-6);box-shadow:var(--shadow-sm);transition:box-shadow var(--transition),border-color var(--transition)}
+.chart-card:hover{box-shadow:var(--shadow-md);border-color:color-mix(in oklch,var(--color-primary) 35%,var(--color-border))}
+.chart-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-6)}
+.chart-title{font-size:var(--text-base);font-weight:600;color:var(--color-text)}
+.chart-desc{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-1)}
+.chart-badge{font-size:var(--text-xs);padding:var(--space-1) var(--space-3);border-radius:9999px;font-weight:500;background:var(--color-primary-highlight);color:var(--color-primary);white-space:nowrap;flex-shrink:0}
+.chart-wrap{position:relative;height:260px}
+
+.data-table-wrap{overflow-x:auto;border-radius:var(--radius-xl);border:1px solid var(--color-border);background:var(--color-surface);box-shadow:var(--shadow-sm);margin-bottom:var(--space-8)}
+.data-table{width:100%;border-collapse:collapse;font-size:var(--text-sm);font-variant-numeric:tabular-nums}
+.data-table th{padding:var(--space-3) var(--space-4);text-align:left;font-size:var(--text-xs);font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);border-bottom:1px solid var(--color-border);background:var(--color-surface-offset)}
+.data-table td{padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-divider);color:var(--color-text-muted);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--color-surface-offset);color:var(--color-text)}
+.data-table a{color:var(--color-primary);text-decoration:none}
+.data-table a:hover{text-decoration:underline}
+.badge{display:inline-block;padding:.15em .55em;border-radius:9999px;font-size:var(--text-xs);font-weight:500;background:var(--color-surface-dynamic);color:var(--color-text-muted)}
+
+.controls{display:flex;flex-wrap:wrap;gap:var(--space-3);align-items:center;margin-bottom:var(--space-6)}
+.filter-label{font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.05em}
+.filter-btn{padding:var(--space-1) var(--space-4);border-radius:9999px;font-size:var(--text-xs);font-weight:500;color:var(--color-text-muted);border:1px solid var(--color-border);background:var(--color-surface);transition:all var(--transition)}
+.filter-btn:hover{color:var(--color-text);border-color:var(--color-primary)}
+.filter-btn.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.search-input{flex:1;min-width:160px;max-width:300px;padding:var(--space-2) var(--space-4);border-radius:9999px;border:1px solid var(--color-border);background:var(--color-surface);font-size:var(--text-sm);color:var(--color-text);outline:none}
+.search-input:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in oklch,var(--color-primary) 20%,transparent)}
+.search-input::placeholder{color:var(--color-text-faint)}
+
+.section-title{font-size:var(--text-lg);font-weight:600;margin-bottom:var(--space-6);color:var(--color-text);display:flex;align-items:center;gap:var(--space-3)}
+.section-title-line{flex:1;height:1px;background:var(--color-divider)}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="#" class="logo">
+      <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-label="HK Property Bot" style="flex-shrink:0">
+        <rect width="32" height="32" rx="7" fill="currentColor" fill-opacity=".08"/>
+        <path d="M6 26V14l10-8 10 8v12H19v-7h-6v7H6Z" fill="var(--color-primary)"/>
+        <rect x="13" y="10" width="6" height="4" rx="1" fill="var(--color-bg)" fill-opacity=".6"/>
+      </svg>
+      <div>
+        <div class="logo-name">HK Property</div>
+        <div class="logo-sub">Market Dashboard</div>
+      </div>
+    </a>
+    <div class="header-actions">
+      <span class="last-updated" id="lastUpdated">Loading…</span>
+      <button class="theme-btn" data-theme-toggle aria-label="Toggle theme">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <nav class="tab-nav" role="tablist">
+    <button class="tab-btn active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="buy">🏠 For Sale</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="rent-client">🔑 Rental (Client)</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="rent-me">🏢 Rental (Me)</button>
+  </nav>
+
+  <!-- OVERVIEW -->
+  <section id="tab-overview" class="tab-panel active" role="tabpanel">
+    <div class="region-filter" id="overviewRegionFilter"></div>
+    <div class="kpi-grid" id="overviewKpis"></div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Listings by District</div><div class="chart-desc">All categories combined</div></div><span class="chart-badge" id="overviewRegionBadge">All</span></div>
+        <div class="chart-wrap"><canvas id="districtChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">New Listings Over Time</div><div class="chart-desc">Records per scrape date</div></div><span class="chart-badge">Trend</span></div>
+        <div class="chart-wrap"><canvas id="timelineChart"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Buy — Price Distribution</div><div class="chart-desc">Listed sale prices (HKD)</div></div></div>
+        <div class="chart-wrap"><canvas id="buyPriceDistChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Rental — Price Distribution</div><div class="chart-desc">Monthly rents (HKD)</div></div></div>
+        <div class="chart-wrap"><canvas id="rentPriceDistChart"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUY -->
+  <section id="tab-buy" class="tab-panel" role="tabpanel">
+    <div class="region-filter" id="buyRegionFilter"></div>
+    <div class="kpi-grid" id="buyKpis"></div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Avg Sale Price Trend</div><div class="chart-desc">Average price by scrape date</div></div><span class="chart-badge">HKD M</span></div>
+        <div class="chart-wrap"><canvas id="buyPriceTrendChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Avg Price by District</div><div class="chart-desc">Mean listed price per area</div></div></div>
+        <div class="chart-wrap"><canvas id="buyDistrictPriceChart"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Listings by Bedroom Count</div><div class="chart-desc">Most common configurations</div></div></div>
+        <div class="chart-wrap"><canvas id="buyRoomsChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Size vs Price</div><div class="chart-desc">sqft vs listed price (HKD M)</div></div></div>
+        <div class="chart-wrap"><canvas id="buySizePriceChart"></canvas></div>
+      </div>
+    </div>
+    <h2 class="section-title">All Buy Listings <span class="section-title-line"></span></h2>
+    <div class="controls">
+      <input class="search-input" type="search" placeholder="Search estate or district…" id="buySearch">
+      <span class="filter-label">Floor:</span>
+      <button class="filter-btn active" data-filter-buy="all">All</button>
+      <button class="filter-btn" data-filter-buy="高層">High</button>
+      <button class="filter-btn" data-filter-buy="中層">Mid</button>
+      <button class="filter-btn" data-filter-buy="低層">Low</button>
+    </div>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Date</th><th>Estate</th><th>District</th><th>Floor</th><th>Size (sqft)</th><th>Rooms</th><th>Price (HKD)</th><th>Source</th></tr></thead>
+        <tbody id="buyTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- RENT CLIENT -->
+  <section id="tab-rent-client" class="tab-panel" role="tabpanel">
+    <div class="region-filter" id="rentClientRegionFilter"></div>
+    <div class="kpi-grid" id="rentClientKpis"></div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Avg Rent Trend</div><div class="chart-desc">Average monthly rent over time</div></div><span class="chart-badge">HKD/mo</span></div>
+        <div class="chart-wrap"><canvas id="rentClientTrendChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Avg Rent by District</div><div class="chart-desc">Mean monthly rent per area</div></div></div>
+        <div class="chart-wrap"><canvas id="rentClientDistrictChart"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Size Distribution</div><div class="chart-desc">Rentals by sqft range</div></div></div>
+        <div class="chart-wrap"><canvas id="rentClientSizeChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Listings by Source</div><div class="chart-desc">Website breakdown</div></div></div>
+        <div class="chart-wrap"><canvas id="rentClientSourceChart"></canvas></div>
+      </div>
+    </div>
+    <h2 class="section-title">All Client Rental Listings <span class="section-title-line"></span></h2>
+    <div class="controls">
+      <input class="search-input" type="search" placeholder="Search estate or district…" id="rentClientSearch">
+    </div>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Date</th><th>Estate</th><th>District</th><th>Floor</th><th>Size (sqft)</th><th>Rooms</th><th>Price (HKD/mo)</th><th>Unit Price</th><th>Source</th></tr></thead>
+        <tbody id="rentClientTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- RENT ME -->
+  <section id="tab-rent-me" class="tab-panel" role="tabpanel">
+    <div class="region-filter" id="rentMeRegionFilter"></div>
+    <div class="kpi-grid" id="rentMeKpis"></div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Avg Rent Trend</div><div class="chart-desc">Average monthly rent over time</div></div><span class="chart-badge">HKD/mo</span></div>
+        <div class="chart-wrap"><canvas id="rentMeTrendChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><div><div class="chart-title">Listings by District</div><div class="chart-desc">Count per area</div></div></div>
+        <div class="chart-wrap"><canvas id="rentMeDistrictChart"></canvas></div>
+      </div>
+    </div>
+    <h2 class="section-title">All My Rental Listings <span class="section-title-line"></span></h2>
+    <div class="controls">
+      <input class="search-input" type="search" placeholder="Search estate or district…" id="rentMeSearch">
+    </div>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Date</th><th>Estate</th><th>District</th><th>Floor</th><th>Size (sqft)</th><th>Rooms</th><th>Price (HKD/mo)</th><th>Unit Price</th><th>Source</th></tr></thead>
+        <tbody id="rentMeTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+// ── Theme toggle ────────────────────────────────────────────────────────────
+(function(){
+  const btn=document.querySelector('[data-theme-toggle]'),root=document.documentElement;
+  let theme=root.getAttribute('data-theme')||'dark';
+  const sun='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  const moon='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  if(btn)btn.innerHTML=theme==='dark'?sun:moon;
+  if(btn)btn.addEventListener('click',()=>{
+    theme=theme==='dark'?'light':'dark';
+    root.setAttribute('data-theme',theme);
+    btn.innerHTML=theme==='dark'?sun:moon;
+    rebuildCharts();
+  });
+})();
+
+// ── CSV parser ──────────────────────────────────────────────────────────────
+function parseCSV(text){
+  const lines=text.trim().split('\n');
+  const headers=lines[0].split(',').map(h=>h.trim().replace(/\r/,''));
+  return lines.slice(1).map(line=>{
+    const vals=[];let cur='',inQ=false;
+    for(const ch of line){
+      if(ch==='"')inQ=!inQ;
+      else if(ch===','&&!inQ){vals.push(cur.trim());cur='';}
+      else cur+=ch;
+    }
+    vals.push(cur.trim().replace(/\r/,''));
+    return Object.fromEntries(headers.map((h,i)=>[h,vals[i]||'']));
+  }).filter(r=>r.listing_id&&r.listing_id!=='listing_id');
+}
+
+function parsePrice(str){
+  if(!str)return null;
+  str=str.replace(/HKD\s*/i,'').replace(/,/g,'').trim();
+  const m=str.match(/([\d.]+)/);
+  return m?parseFloat(m[1]):null;
+}
+
+function fmtM(n){if(!n||isNaN(n))return '—';if(n>=1e6)return '$'+(n/1e6).toFixed(1)+'M';if(n>=1e3)return '$'+(n/1e3).toFixed(0)+'K';return '$'+Math.round(n);}
+function fmtDate(d){return(!d||d.length<10)?d||'—':d.slice(0,10);}
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+
+function colors(){
+  return{
+    primary:cssVar('--color-primary'),orange:cssVar('--color-orange'),gold:cssVar('--color-gold'),
+    blue:cssVar('--color-blue'),purple:cssVar('--color-purple'),success:cssVar('--color-success'),
+    error:cssVar('--color-error'),text:cssVar('--color-text'),muted:cssVar('--color-text-muted'),
+    border:cssVar('--color-border'),surface:cssVar('--color-surface-2'),
+  };
+}
+
+// ── Chart registry ──────────────────────────────────────────────────────────
+const charts={};
+function mkChart(id,cfg){if(charts[id]){charts[id].destroy();delete charts[id];}const c=document.getElementById(id);if(!c)return;charts[id]=new Chart(c,cfg);return charts[id];}
+
+Chart.defaults.font.family=getComputedStyle(document.body).fontFamily;
+Chart.defaults.animation.duration=600;
+Chart.defaults.animation.easing='easeOutQuart';
+
+function baseOpts(c,extraX={},extraY={}){
+  return{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:c.muted,font:{size:11},boxWidth:11,padding:14}},
+      tooltip:{backgroundColor:c.surface,titleColor:c.text,bodyColor:c.muted,borderColor:c.border,borderWidth:1,padding:10,cornerRadius:8}},
+    scales:{
+      x:{ticks:{color:c.muted,font:{size:10},maxRotation:40},...extraX,grid:{color:c.border}},
+      y:{ticks:{color:c.muted,font:{size:10}},...extraY,grid:{color:c.border}}
+    }
+  };
+}
+
+function lineChart(id,labels,data,color,label,yFmt){
+  const c=colors(),opts=baseOpts(c,{},{ticks:{...baseOpts(c).scales.y.ticks,callback:yFmt||(v=>v)}});
+  mkChart(id,{type:'line',data:{labels,datasets:[{label,data,borderColor:color,backgroundColor:color+'25',pointBackgroundColor:color,pointRadius:4,pointHoverRadius:6,tension:.4,fill:true}]},options:{...opts,plugins:{...opts.plugins,legend:{display:false}}}});
+}
+function barChart(id,labels,data,color,label,horiz,yFmt){
+  const c=colors(),opts=baseOpts(c);
+  if(horiz)opts.indexAxis='y';
+  if(yFmt)opts.scales.y.ticks.callback=yFmt;
+  mkChart(id,{type:'bar',data:{labels,datasets:[{label,data,backgroundColor:color+'bb',borderColor:color,borderWidth:1.5,borderRadius:5}]},options:{...opts,plugins:{...opts.plugins,legend:{display:false}}}});
+}
+function doughnut(id,labels,data,colorArr){
+  const c=colors();
+  mkChart(id,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colorArr.map(x=>x+'cc'),borderColor:colorArr,borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:c.muted,font:{size:11},padding:12,boxWidth:12}},tooltip:{backgroundColor:c.surface,titleColor:c.text,bodyColor:c.muted,borderColor:c.border,borderWidth:1,padding:10,cornerRadius:8}}}});
+}
+function scatterChart(id,data,color){
+  const c=colors(),opts=baseOpts(c,{title:{display:true,text:'Size (sqft)',color:c.muted,font:{size:11}}},{title:{display:true,text:'Price (M HKD)',color:c.muted,font:{size:11}},ticks:{...baseOpts(c).scales.y.ticks,callback:v=>v+'M'}});
+  mkChart(id,{type:'bubble',data:{datasets:[{label:'Listings',data,backgroundColor:color+'66',borderColor:color,borderWidth:1}]},options:{...opts,plugins:{...opts.plugins,legend:{display:false}}}});
+}
+
+// ── KPIs ────────────────────────────────────────────────────────────────────
+function renderKpis(id,items){
+  document.getElementById(id).innerHTML=items.map(({label,value,sub,cls})=>`
+    <div class="kpi-card ${cls||'kpi-primary'}">
+      <div class="kpi-label">${label}</div>
+      <div class="kpi-value">${value}</div>
+      ${sub?`<div class="kpi-sub">${sub}</div>`:''}
+    </div>`).join('');
+}
+
+function avg(arr){return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:null;}
+function groupAvg(rows,keyFn,valFn){
+  const m={};
+  rows.forEach(r=>{const k=keyFn(r),v=valFn(r);if(k&&v!==null&&!isNaN(v)){(m[k]=m[k]||[]).push(v);}});
+  return Object.entries(m).map(([k,vs])=>({key:k,avg:avg(vs),count:vs.length})).sort((a,b)=>b.avg-a.avg);
+}
+function dateAvg(rows,valFn){
+  const m={};
+  rows.forEach(r=>{const d=r.date_scraped?.slice(0,10);const v=valFn(r);if(d&&v&&!isNaN(v)){(m[d]=m[d]||[]).push(v);}});
+  return Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,vs])=>({date:k,avg:avg(vs)}));
+}
+
+// ── Table rendering ─────────────────────────────────────────────────────────
+function emptyRow(cols){return `<tr><td colspan="${cols}" style="text-align:center;padding:2.5rem;color:var(--color-text-faint)">No data yet — run the scraper first.</td></tr>`;}
+function srcBadge(r){const s=(r.source||'').replace('.com','');return r.url?`<a href="${r.url}" target="_blank" rel="noopener"><span class="badge">${s}</span></a>`:`<span class="badge">${s||'—'}</span>`;}
+function floorBadge(f){return f?`<span class="badge">${f}</span>`:'—';}
+function districtBadge(d){return d?`<span class="badge">${d}</span>`:'—';}
+
+function renderBuyTable(rows){
+  const tb=document.getElementById('buyTableBody');
+  if(!rows.length){tb.innerHTML=emptyRow(8);return;}
+  tb.innerHTML=rows.map(r=>`<tr>
+    <td>${fmtDate(r.date_scraped)}</td>
+    <td>${r.estate||'—'}</td>
+    <td>${districtBadge(r.district)}</td>
+    <td>${floorBadge(r.floor)}</td>
+    <td>${r.size_sqft||'—'}</td>
+    <td>${r.rooms||'—'}</td>
+    <td style="color:var(--color-text)">${fmtM(parsePrice(r.price||r.sold_price))}</td>
+    <td>${srcBadge(r)}</td>
+  </tr>`).join('');
+}
+function renderRentTable(tbodyId,rows){
+  const tb=document.getElementById(tbodyId);
+  if(!rows.length){tb.innerHTML=emptyRow(9);return;}
+  tb.innerHTML=rows.map(r=>`<tr>
+    <td>${fmtDate(r.date_scraped)}</td>
+    <td>${r.estate||'—'}</td>
+    <td>${districtBadge(r.district)}</td>
+    <td>${floorBadge(r.floor)}</td>
+    <td>${r.size_sqft||'—'}</td>
+    <td>${r.rooms||'—'}</td>
+    <td style="color:var(--color-text)">${fmtM(parsePrice(r.price||r.sold_price))}</td>
+    <td>${r.unit_price||'—'}</td>
+    <td>${srcBadge(r)}</td>
+  </tr>`).join('');
+}
+
+// ── Region filter state (per tab) ───────────────────────────────────────────
+const regionState={overview:'all',buy:'all','rent-client':'all','rent-me':'all'};
+
+function buildRegionChips(containerId,districts,tabKey,onSelect){
+  const el=document.getElementById(containerId);
+  if(!el)return;
+  const sorted=['all',...[...districts].sort((a,b)=>a.localeCompare(b,'zh-HK'))];
+  el.innerHTML=`<span class="region-filter-label">Region</span>`+sorted.map(d=>{
+    const label=d==='all'?'All':d;
+    const active=regionState[tabKey]===d?'active':'';
+    return `<button class="region-chip ${active}" data-region="${d}" data-tab-key="${tabKey}">${label}</button>`;
+  }).join('');
+  el.querySelectorAll('.region-chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      const region=chip.dataset.region;
+      regionState[tabKey]=region;
+      el.querySelectorAll('.region-chip').forEach(c=>c.classList.toggle('active',c.dataset.region===region));
+      onSelect(region);
+    });
+  });
+}
+
+// ── State ────────────────────────────────────────────────────────────────────
+let buyData=[], rcData=[], rmData=[];
+let buyFloor='all', buySearch='', rcSearch='', rmSearch='';
+
+function applyRegion(rows,tab){
+  const r=regionState[tab];
+  return r==='all'?rows:rows.filter(x=>x.district===r);
+}
+
+function filteredBuy(){
+  const t=buySearch.toLowerCase();
+  return applyRegion(buyData,'buy').filter(r=>{
+    const fm=buyFloor==='all'||r.floor===buyFloor;
+    const sm=!t||(r.estate||'').toLowerCase().includes(t)||(r.district||'').toLowerCase().includes(t);
+    return fm&&sm;
+  });
+}
+function filteredRC(){
+  const t=rcSearch.toLowerCase();
+  return applyRegion(rcData,'rent-client').filter(r=>
+    !t||(r.estate||'').toLowerCase().includes(t)||(r.district||'').toLowerCase().includes(t));
+}
+function filteredRM(){
+  const t=rmSearch.toLowerCase();
+  return applyRegion(rmData,'rent-me').filter(r=>
+    !t||(r.estate||'').toLowerCase().includes(t)||(r.district||'').toLowerCase().includes(t));
+}
+
+document.querySelectorAll('[data-filter-buy]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('[data-filter-buy]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');buyFloor=b.dataset.filterBuy;renderBuyTable(filteredBuy());
+  });
+});
+document.getElementById('buySearch').addEventListener('input',e=>{buySearch=e.target.value;renderBuyTable(filteredBuy());});
+document.getElementById('rentClientSearch').addEventListener('input',e=>{rcSearch=e.target.value;renderRentTable('rentClientTableBody',filteredRC());});
+document.getElementById('rentMeSearch').addEventListener('input',e=>{rmSearch=e.target.value;renderRentTable('rentMeTableBody',filteredRM());});
+
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-selected','false');});
+    document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');b.setAttribute('aria-selected','true');
+    document.getElementById('tab-'+b.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function renderOverview(){
+  const c=colors();
+  const allRegion=regionState.overview;
+  const allRows=applyRegion([...buyData,...rcData,...rmData],'overview');
+  const buyRows=allRegion==='all'?buyData:buyData.filter(r=>r.district===allRegion);
+  const rcRows=allRegion==='all'?rcData:rcData.filter(r=>r.district===allRegion);
+  const rmRows=allRegion==='all'?rmData:rmData.filter(r=>r.district===allRegion);
+
+  const badge=document.getElementById('overviewRegionBadge');
+  if(badge)badge.textContent=allRegion==='all'?'All':allRegion;
+
+  const buyPrices=buyRows.map(r=>parsePrice(r.price||r.sold_price)).filter(v=>v&&v>1e5&&v<6e8);
+  const rentAllPrices=[...rcRows,...rmRows].map(r=>parsePrice(r.price||r.sold_price)).filter(v=>v&&v>2000&&v<3e5);
+
+  renderKpis('overviewKpis',[
+    {label:'Total Listings',value:allRows.length,sub:'across all categories',cls:'kpi-primary'},
+    {label:'For Sale',value:buyRows.length,sub:'buy listings',cls:'kpi-orange'},
+    {label:'Rental (Client)',value:rcRows.length,sub:'client search',cls:'kpi-gold'},
+    {label:'Rental (Me)',value:rmRows.length,sub:'personal search',cls:'kpi-blue'},
+    {label:'Avg Sale Price',value:buyPrices.length?fmtM(avg(buyPrices)):'—',sub:'listed',cls:'kpi-primary'},
+    {label:'Avg Rental',value:rentAllPrices.length?fmtM(avg(rentAllPrices))+'/mo':'—',sub:'monthly',cls:'kpi-purple'},
+  ]);
+
+  const dm={};allRows.forEach(r=>{if(r.district)dm[r.district]=(dm[r.district]||0)+1;});
+  const ds=Object.entries(dm).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  barChart('districtChart',ds.map(e=>e[0]),ds.map(e=>e[1]),c.primary,'Listings',true);
+
+  const allRowsFull=[...buyData,...rcData,...rmData];
+  const tm={};allRowsFull.forEach(r=>{const d=r.date_scraped?.slice(0,10);if(d)tm[d]=(tm[d]||0)+1;});
+  const ts=Object.entries(tm).sort((a,b)=>a[0].localeCompare(b[0]));
+  lineChart('timelineChart',ts.map(e=>e[0]),ts.map(e=>e[1]),c.orange,'Listings per day');
+
+  function distChartFn(cid,prices,col,buckets){
+    const cnts=buckets.map(b=>prices.filter(p=>p>=b.min&&(!b.max||p<b.max)).length);
+    barChart(cid,buckets.map(b=>b.label),cnts,col,'Count',false);
+  }
+  distChartFn('buyPriceDistChart',buyPrices,c.orange,[
+    {label:'<$5M',min:0,max:5e6},{label:'$5–10M',min:5e6,max:10e6},{label:'$10–20M',min:10e6,max:20e6},
+    {label:'$20–35M',min:20e6,max:35e6},{label:'>$35M',min:35e6}
+  ]);
+  distChartFn('rentPriceDistChart',rentAllPrices,c.gold,[
+    {label:'<$10K',min:0,max:10000},{label:'$10–20K',min:10000,max:20000},{label:'$20–35K',min:20000,max:35000},
+    {label:'$35–50K',min:35000,max:50000},{label:'>$50K',min:50000}
+  ]);
+}
+
+function renderBuyTab(){
+  const c=colors();
+  const rows=applyRegion(buyData,'buy');
+  const buyPrices=rows.map(r=>parsePrice(r.price||r.sold_price)).filter(v=>v&&v>1e5&&v<6e8);
+
+  renderKpis('buyKpis',[
+    {label:'Total',value:rows.length,sub:'listings',cls:'kpi-orange'},
+    {label:'Avg Price',value:buyPrices.length?fmtM(avg(buyPrices)):'—',sub:'listed',cls:'kpi-orange'},
+    {label:'Min Price',value:buyPrices.length?fmtM(Math.min(...buyPrices)):'—',sub:'lowest',cls:'kpi-primary'},
+    {label:'Max Price',value:buyPrices.length?fmtM(Math.max(...buyPrices)):'—',sub:'highest',cls:'kpi-error'},
+    {label:'Districts',value:[...new Set(rows.map(r=>r.district).filter(Boolean))].length,sub:'unique',cls:'kpi-gold'},
+    {label:'Median Size',value:(()=>{const s=rows.map(r=>parseFloat(r.size_sqft)).filter(v=>v>0).sort((a,b)=>a-b);return s.length?Math.round(s[Math.floor(s.length/2)])+' sqft':'—';})(),sub:'floor area',cls:'kpi-blue'},
+  ]);
+
+  const bt=dateAvg(rows,r=>parsePrice(r.price||r.sold_price)).filter(x=>x.avg>1e5&&x.avg<6e8);
+  lineChart('buyPriceTrendChart',bt.map(x=>x.date),bt.map(x=>+(x.avg/1e6).toFixed(2)),c.orange,'Avg Price',v=>v+'M');
+
+  const bda=groupAvg(rows,r=>r.district,r=>parsePrice(r.price||r.sold_price)).filter(x=>x.avg>1e5).slice(0,8);
+  barChart('buyDistrictPriceChart',bda.map(x=>x.key),bda.map(x=>+(x.avg/1e6).toFixed(1)),c.gold,'Avg Price (M)',false,v=>v+'M');
+
+  const rm2={};rows.forEach(r=>{if(r.rooms&&+r.rooms){const k=r.rooms+' rooms';rm2[k]=(rm2[k]||0)+1;}});
+  const rk=Object.entries(rm2).sort((a,b)=>+a[0]-+b[0]);
+  barChart('buyRoomsChart',rk.map(e=>e[0]),rk.map(e=>e[1]),c.blue,'Listings',false);
+
+  const sd=rows.filter(r=>r.size_sqft&&(r.price||r.sold_price)).map(r=>({x:+r.size_sqft,y:+(parsePrice(r.price||r.sold_price)/1e6).toFixed(2),r:Math.max(4,+(r.rooms||3)*2)})).filter(d=>d.x>0&&d.y>0&&d.y<100);
+  scatterChart('buySizePriceChart',sd,c.purple);
+
+  renderBuyTable(filteredBuy());
+}
+
+function renderRCTab(){
+  const c=colors();
+  const rows=applyRegion(rcData,'rent-client');
+  const rcp=rows.map(r=>parsePrice(r.price||r.sold_price)).filter(v=>v&&v>1000&&v<3e5);
+
+  renderKpis('rentClientKpis',[
+    {label:'Total',value:rows.length,sub:'listings',cls:'kpi-gold'},
+    {label:'Avg Rent',value:rcp.length?fmtM(avg(rcp))+'/mo':'—',sub:'monthly',cls:'kpi-gold'},
+    {label:'Min Rent',value:rcp.length?fmtM(Math.min(...rcp))+'/mo':'—',sub:'lowest',cls:'kpi-primary'},
+    {label:'Max Rent',value:rcp.length?fmtM(Math.max(...rcp))+'/mo':'—',sub:'highest',cls:'kpi-orange'},
+    {label:'Districts',value:[...new Set(rows.map(r=>r.district).filter(Boolean))].length,sub:'areas',cls:'kpi-blue'},
+  ]);
+  const rct=dateAvg(rows,r=>parsePrice(r.price||r.sold_price)).filter(x=>x.avg>1000);
+  lineChart('rentClientTrendChart',rct.map(x=>x.date),rct.map(x=>Math.round(x.avg)),c.gold,'Avg Rent (HKD)',v=>'$'+Math.round(v/1000)+'K');
+  const rcda=groupAvg(rows,r=>r.district,r=>parsePrice(r.price||r.sold_price)).filter(x=>x.avg>0).slice(0,8);
+  barChart('rentClientDistrictChart',rcda.map(x=>x.key),rcda.map(x=>Math.round(x.avg)),c.gold,'Avg Rent',false,v=>'$'+Math.round(v/1000)+'K');
+  const rsm={};rows.forEach(r=>{const s=+r.size_sqft;if(s>0){let b=s<500?'<500 sqft':s<700?'500–700 sqft':'700+ sqft';rsm[b]=(rsm[b]||0)+1;}});
+  barChart('rentClientSizeChart',Object.keys(rsm),Object.values(rsm),c.success,'Listings',false);
+  const rsrc={};rows.forEach(r=>{if(r.source)rsrc[r.source]=(rsrc[r.source]||0)+1;});
+  doughnut('rentClientSourceChart',Object.keys(rsrc),Object.values(rsrc),[c.primary,c.gold,c.orange,c.blue,c.purple]);
+  renderRentTable('rentClientTableBody',filteredRC());
+}
+
+function renderRMTab(){
+  const c=colors();
+  const rows=applyRegion(rmData,'rent-me');
+  const rmp=rows.map(r=>parsePrice(r.price||r.sold_price)).filter(v=>v&&v>1000&&v<3e5);
+
+  renderKpis('rentMeKpis',[
+    {label:'Total',value:rows.length,sub:'listings',cls:'kpi-blue'},
+    {label:'Avg Rent',value:rmp.length?fmtM(avg(rmp))+'/mo':'—',sub:'monthly',cls:'kpi-blue'},
+    {label:'Min Rent',value:rmp.length?fmtM(Math.min(...rmp))+'/mo':'—',sub:'lowest',cls:'kpi-primary'},
+    {label:'Max Rent',value:rmp.length?fmtM(Math.max(...rmp))+'/mo':'—',sub:'highest',cls:'kpi-orange'},
+    {label:'Estates',value:[...new Set(rows.map(r=>r.estate).filter(Boolean))].length,sub:'unique',cls:'kpi-gold'},
+  ]);
+  const rmt=dateAvg(rows,r=>parsePrice(r.price||r.sold_price)).filter(x=>x.avg>1000);
+  lineChart('rentMeTrendChart',rmt.map(x=>x.date),rmt.map(x=>Math.round(x.avg)),c.blue,'Avg Rent (HKD)',v=>'$'+Math.round(v/1000)+'K');
+  const rmdc={};rows.forEach(r=>{if(r.district)rmdc[r.district]=(rmdc[r.district]||0)+1;});
+  barChart('rentMeDistrictChart',Object.keys(rmdc),Object.values(rmdc),c.blue,'Listings',true);
+  renderRentTable('rentMeTableBody',filteredRM());
+}
+
+function renderAll(){
+  const allRows=[...buyData,...rcData,...rmData];
+
+  // last updated
+  const dates=allRows.map(r=>r.date_scraped).filter(Boolean).sort();
+  document.getElementById('lastUpdated').textContent=dates.length?'Updated: '+dates[dates.length-1]:'No data';
+
+  // Build region chips per tab (dynamically from data)
+  const overviewDistricts=new Set(allRows.map(r=>r.district).filter(Boolean));
+  const buyDistricts=new Set(buyData.map(r=>r.district).filter(Boolean));
+  const rcDistricts=new Set(rcData.map(r=>r.district).filter(Boolean));
+  const rmDistricts=new Set(rmData.map(r=>r.district).filter(Boolean));
+
+  buildRegionChips('overviewRegionFilter',overviewDistricts,'overview',()=>renderOverview());
+  buildRegionChips('buyRegionFilter',buyDistricts,'buy',()=>renderBuyTab());
+  buildRegionChips('rentClientRegionFilter',rcDistricts,'rent-client',()=>renderRCTab());
+  buildRegionChips('rentMeRegionFilter',rmDistricts,'rent-me',()=>renderRMTab());
+
+  renderOverview();
+  renderBuyTab();
+  renderRCTab();
+  renderRMTab();
+}
+
+function rebuildCharts(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});Object.keys(charts).forEach(k=>delete charts[k]);renderAll();}
+
+// ── Load CSVs from data/ folder ──────────────────────────────────────────────
+async function load(){
+  async function fetchCSV(path){
+    try{const r=await fetch(path);if(!r.ok)return '';return r.text();}catch(e){return '';}
+  }
+  const [bt,rct,rmt]=await Promise.all([fetchCSV('data/buy_transactions.csv'),fetchCSV('data/rental_client.csv'),fetchCSV('data/rental_me.csv')]);
+  buyData=bt?parseCSV(bt):[];
+  rcData=rct?parseCSV(rct):[];
+  rmData=rmt?parseCSV(rmt):[];
+  renderAll();
+}
+load();
+</script>
+</body>
+</html>

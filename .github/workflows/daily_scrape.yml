@@ -1,0 +1,42 @@
+name: HK Property Weekly Scrape
+
+on:
+  schedule:
+    # Runs weekly on Saturdays at 08:00 HKT (00:00 UTC)
+    - cron: '0 0 * * 6'
+  workflow_dispatch:   # allow manual trigger from Actions tab
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed to commit updated CSV files back
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scraper
+        env:
+          TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SCRAPER_API_KEY:  ${{ secrets.SCRAPER_API_KEY }}
+        run: python scraper.py
+
+      - name: Commit updated CSV data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/*.csv || true
+          git diff --cached --quiet || git commit -m "chore: update property CSV data $(date +'%Y-%m-%d')"
+          git push
