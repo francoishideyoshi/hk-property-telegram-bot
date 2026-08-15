@@ -22,3 +22,7 @@
 2026-05-23T02:44:08.500723,hk.centanet.com,https://hk.centanet.com/findproperty/list/transaction,Failed to fetch (ScraperAPI exhausted + direct blocked)
 2026-05-23T02:52:31.116011,midland.com.hk,https://www.midland.com.hk/en/list/rent,Failed to fetch (ScraperAPI exhausted + direct blocked)
 2026-05-23T02:53:01.878913,midland.com.hk,https://www.midland.com.hk/en/list/buy,Failed to fetch (ScraperAPI exhausted + direct blocked)
+2026-08-15T01:42:43.462458,midland.com.hk,https://www.midland.com.hk/en/list/rent,ScraperAPI credits exhausted or rate-limited (HTTP 403) + direct skipped (geo-blocked)
+2026-08-15T01:42:43.804012,midland.com.hk,https://www.midland.com.hk/en/list/buy,ScraperAPI credits exhausted or rate-limited (HTTP 403) + direct skipped (geo-blocked)
+2026-08-15T01:42:45.944454,house730.com,https://www.house730.com/en-us/rent/t1/,ScraperAPI credits exhausted or rate-limited (HTTP 403) + direct blocked
+2026-08-15T01:42:47.710016,house730.com,https://www.house730.com/en-us/buy/t1/,ScraperAPI credits exhausted or rate-limited (HTTP 403) + direct blocked
