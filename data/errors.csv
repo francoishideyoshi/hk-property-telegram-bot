@@ -26,3 +26,7 @@
 2026-08-15T01:42:43.804012,midland.com.hk,https://www.midland.com.hk/en/list/buy,ScraperAPI credits exhausted or rate-limited (HTTP 403) + direct skipped (geo-blocked)
 2026-08-15T01:42:45.944454,house730.com,https://www.house730.com/en-us/rent/t1/,ScraperAPI credits exhausted or rate-limited (HTTP 403) + direct blocked
 2026-08-15T01:42:47.710016,house730.com,https://www.house730.com/en-us/buy/t1/,ScraperAPI credits exhausted or rate-limited (HTTP 403) + direct blocked
+2026-08-22T01:42:13.473564,midland.com.hk,https://www.midland.com.hk/en/list/rent,ScraperAPI credits exhausted or rate-limited (HTTP 403) + direct skipped (geo-blocked)
+2026-08-22T01:42:13.576751,midland.com.hk,https://www.midland.com.hk/en/list/buy,ScraperAPI credits exhausted or rate-limited (HTTP 403) + direct skipped (geo-blocked)
+2026-08-22T01:42:13.909010,house730.com,https://www.house730.com/en-us/rent/t1/,ScraperAPI credits exhausted or rate-limited (HTTP 403) + direct blocked
+2026-08-22T01:42:14.142621,house730.com,https://www.house730.com/en-us/buy/t1/,ScraperAPI credits exhausted or rate-limited (HTTP 403) + direct blocked
